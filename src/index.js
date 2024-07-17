@@ -68,6 +68,7 @@ bot.on("interactionCreate", async (interaction) => {
   } else if (commandName === "add") {
     const remark = interaction.options.getString("remark");
     const amount = interaction.options.getInteger("amount");
+    const isExpenses = interaction.options.getBoolean("is_expenses");
 
     if (!remark || !amount) {
       return interaction.reply("Invalid input");
@@ -77,10 +78,12 @@ bot.on("interactionCreate", async (interaction) => {
     const userId = interaction.user.id;
 
     // REST API call to the backend
-    await addExpenses(code, userId)
+    await addExpenses(remark, amount, userId, isExpenses)
       .then((response) => {
         if (response.data.status === 200) {
-          let message = `New expense added with remark: ${remark} and amount: ${amount}`;
+          let message = `New ${
+            isExpenses ? "expense" : "income"
+          } added with remark: ${remark} and amount: ${amount}`;
           return interaction.reply(message);
         } else {
           return interaction.reply("Account linking failed");

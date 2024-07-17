@@ -36,6 +36,12 @@ const commands = [
         type: ApplicationCommandOptionType.Integer,
         required: true,
       },
+      {
+        name: "is_expenses",
+        description: "true: expenses; false: incomes",
+        type: ApplicationCommandOptionType.Boolean,
+        required: true,
+      },
     ],
   },
 ];
