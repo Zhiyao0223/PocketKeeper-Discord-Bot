@@ -3,6 +3,7 @@ require("dotenv").config();
 const { Client, IntentsBitField } = require("discord.js");
 const https = require("https");
 const linkAccount = require("./features/link_account");
+const addExpenses = require("./features/add_expenses");
 
 const bot = new Client({
   intents: [
@@ -72,8 +73,25 @@ bot.on("interactionCreate", async (interaction) => {
       return interaction.reply("Invalid input");
     }
 
-    let message = `New expense added with remark: ${remark} and amount: ${amount}`;
-    return interaction.reply(message);
+    // Get the user ID
+    const userId = interaction.user.id;
+
+    // REST API call to the backend
+    await addExpenses(code, userId)
+      .then((response) => {
+        if (response.data.status === 200) {
+          let message = `New expense added with remark: ${remark} and amount: ${amount}`;
+          return interaction.reply(message);
+        } else {
+          return interaction.reply("Account linking failed");
+        }
+      })
+      .catch((error) => {
+        console.error("An error occurred:", error);
+        return interaction.reply(
+          "Unexpected error occurred. Please try again later."
+        );
+      });
   }
 });
 
